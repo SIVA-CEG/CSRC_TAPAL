@@ -32,32 +32,43 @@ export default function CompletedTapal({ tapals }) {
     },
     { key: "mhFileNo", label: "M.H.No / File No." },
     { key: "tapalDate", label: "Date" },
+    {
+      key: "hardCopyReceivedDate",
+      label: "Hard Copy Received Date",
+      render: (tapal) => tapal.hardCopyReceivedDate || "—",
+    },
     { key: "ctdtCategory", label: "Category" },
     { key: "documentType", label: "Tapal Type" },
     { key: "tapalFrom", label: "Tapal From" },
     { key: "assignedTo", label: "Assigned To" },
     {
-  key: "bill",
-  label: "View Bill",
-  render: (tapal) => (
-    <button
-      className="btn btn-outline btn-sm"
-      onClick={() => window.open(tapal.billUrl || "/dummy-bill.pdf", "_blank")}
-    >
-      View Bill
-    </button>
-  ),
-},
+      key: "bill",
+      label: "View Bill",
+      render: (tapal) => (
+        <button
+          className="btn btn-outline btn-sm"
+          onClick={() => window.open(tapal.billUrl || "/dummy-bill.pdf", "_blank")}
+        >
+          View Bill
+        </button>
+      ),
+    },
     { key: "despatchDate", label: "Despatch Date" },
     {
       key: "action",
       label: "Action",
       render: (tapal) => (
         <div className="btn-group">
-          <button className="btn btn-outline btn-sm" onClick={() => setDetail(tapal)}>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => setDetail(tapal)}
+          >
             View
           </button>
-          <button className="btn btn-primary btn-sm" onClick={() => setReport(tapal)}>
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => setReport(tapal)}
+          >
             Report
           </button>
         </div>
@@ -67,7 +78,7 @@ export default function CompletedTapal({ tapals }) {
 
   return (
     <div className="page-stack">
-      <div className="page-header-row">
+      <div className="page-header-row completed-header">
         <div>
           <h2 className="page-title">Completed Tapals</h2>
           <p className="page-subtitle">
@@ -75,7 +86,10 @@ export default function CompletedTapal({ tapals }) {
           </p>
         </div>
 
-        <button className="btn btn-primary" onClick={() => setOverallReport(true)}>
+        <button
+          className="btn btn-primary overall-report-btn"
+          onClick={() => setOverallReport(true)}
+        >
           Overall Report
         </button>
       </div>
@@ -91,12 +105,19 @@ export default function CompletedTapal({ tapals }) {
         <DataTable
           columns={columns}
           rows={rowsWithIdx}
-          totalLabel={`${completed.length} record${completed.length !== 1 ? "s" : ""}`}
+          totalLabel={`${completed.length} record${
+            completed.length !== 1 ? "s" : ""
+          }`}
         />
       </div>
 
-      {detail && <TapalDetailModal tapal={detail} onClose={() => setDetail(null)} />}
-      {report && <TapalReport tapal={report} onClose={() => setReport(null)} />}
+      {detail && (
+        <TapalDetailModal tapal={detail} onClose={() => setDetail(null)} />
+      )}
+
+      {report && (
+        <TapalReport tapal={report} onClose={() => setReport(null)} />
+      )}
 
       {overallReport && (
         <OverallTapalReport

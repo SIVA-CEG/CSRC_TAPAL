@@ -37,3 +37,18 @@ export const completeTapal = async (tapalNo) => {
   });
   return res.json();
 };
+export const markHardCopyReceived = async (tapalNo, hardCopyReceivedDate) => {
+  const res = await fetch(`${API_URL}/${tapalNo}/hard-copy-received`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ hardCopyReceivedDate }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to update hard copy received date");
+  }
+
+  return res.json();
+};

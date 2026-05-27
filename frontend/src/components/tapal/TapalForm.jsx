@@ -10,6 +10,7 @@ import {
 
 const empty = {
   tapalDate: "",
+  hardCopyReceivedDate: "",
   acceptanceId: "",
   mhFileNo: "",
   ctdtCategory: "",
@@ -92,6 +93,7 @@ export default function TapalForm({ onAdd, onCancel }) {
     fd.append("tapalNo", `TEMP${Date.now()}`);
     fd.append("acceptanceId", form.acceptanceId || "");
     fd.append("tapalDate", form.tapalDate || today);
+    fd.append("hardCopyReceivedDate", form.hardCopyReceivedDate || "");
     fd.append("referenceDate", form.referenceDate || today);
     fd.append("referenceNo", form.referenceNo);
     fd.append("mhFileNo", form.mhFileNo);
@@ -119,12 +121,22 @@ export default function TapalForm({ onAdd, onCancel }) {
       <div className="form-section">
         <h4>Basic Information</h4>
 
-        <div className="form-grid form-grid-3">
+        <div className="form-grid form-grid-4">
           <FormField label="Tapal Date">
             <input
               type="date"
               value={form.tapalDate}
               onChange={(e) => updateField("tapalDate", e.target.value)}
+            />
+          </FormField>
+
+          <FormField label="Hard Copy Received Date">
+            <input
+              type="date"
+              value={form.hardCopyReceivedDate}
+              onChange={(e) =>
+                updateField("hardCopyReceivedDate", e.target.value)
+              }
             />
           </FormField>
 
@@ -263,7 +275,7 @@ export default function TapalForm({ onAdd, onCancel }) {
         </FormField>
       </div>
 
-      <div className="form-actions">
+      <div className="form-actions form-actions-left">
         <button type="button" className="btn btn-outline" onClick={onCancel}>
           Cancel
         </button>

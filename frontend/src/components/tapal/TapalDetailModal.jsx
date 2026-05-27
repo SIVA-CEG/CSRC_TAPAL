@@ -13,6 +13,10 @@ export default function TapalDetailModal({ tapal, onClose }) {
     { label: "Acceptance ID", value: tapal.acceptanceId || "—" },
     { label: "M.H./File No.", value: tapal.mhFileNo || "—" },
     { label: "Tapal Date", value: tapal.tapalDate || "—" },
+    {
+  label: "Hard Copy Received Date",
+  value: tapal.hardCopyReceivedDate || "—",
+},
     { label: "Reference No.", value: tapal.referenceNo || "—" },
     { label: "Reference Date", value: tapal.referenceDate || "—" },
     { label: "CTDT Category", value: tapal.ctdtCategory || "—" },

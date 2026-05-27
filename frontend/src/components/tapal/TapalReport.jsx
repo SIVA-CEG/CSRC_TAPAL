@@ -27,21 +27,22 @@ export default function TapalReport({ tapal, onClose }) {
   };
 
   const fields = [
-    ["Tapal ID", tapal.id],
-    ["Acceptance ID", tapal.acceptanceId || "—"],
-    ["M.H./File No.", tapal.mhFileNo || "—"],
-    ["Tapal Date", tapal.tapalDate || "—"],
-    ["Reference No.", tapal.referenceNo || "—"],
-    ["Reference Date", tapal.referenceDate || "—"],
-    ["CTDT Category", tapal.ctdtCategory || "—"],
-    ["Document Type", tapal.documentType || "—"],
-    ["Tapal From", tapal.tapalFrom || "—"],
-    ["Department", tapal.department || "—"],
-    ["Campus", tapal.campus || "—"],
-    ["Amount", tapal.amount ? `₹${Number(tapal.amount).toLocaleString("en-IN")}` : "—"],
-    ["Tapal Mode", tapal.tapalMode || "—"],
-    ["Despatch Date", tapal.despatchDate || "—"],
-  ];
+  ["Tapal ID", tapal.id],
+  ["Acceptance ID", tapal.acceptanceId || "—"],
+  ["M.H./File No.", tapal.mhFileNo || "—"],
+  ["Tapal Date", tapal.tapalDate || "—"],
+  ["Hard Copy Received Date", tapal.hardCopyReceivedDate || "—"],
+  ["Reference No.", tapal.referenceNo || "—"],
+  ["Reference Date", tapal.referenceDate || "—"],
+  ["CTDT Category", tapal.ctdtCategory || "—"],
+  ["Document Type", tapal.documentType || "—"],
+  ["Tapal From", tapal.tapalFrom || "—"],
+  ["Department", tapal.department || "—"],
+  ["Campus", tapal.campus || "—"],
+  ["Amount", tapal.amount ? `₹${Number(tapal.amount).toLocaleString("en-IN")}` : "—"],
+  ["Tapal Mode", tapal.tapalMode || "—"],
+  ["Despatch Date", tapal.despatchDate || "—"],
+];
 
   return (
     <div className="modal-overlay" onClick={onClose}>

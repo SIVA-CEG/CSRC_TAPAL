@@ -11,7 +11,9 @@ import {
   assignTapal,
   transferTapal,
   completeTapal,
+  markHardCopyReceived,
 } from "./api/tapalApi";
+
 
 const formatDate = (date) => {
   if (!date) return null;
@@ -42,6 +44,10 @@ const mapTapal = (t) => ({
     ? `http://localhost:5000${t.bill_file}`
     : "/dummy-bill.pdf",
   billFileName: t.bill_file,
+  hardCopyReceivedDate: formatDate(t.hard_copy_received_date),
+hardCopyReceivedDateRaw: t.hard_copy_received_date
+  ? t.hard_copy_received_date.split("T")[0]
+  : "",
 });
 
 export default function App() {
@@ -81,21 +87,35 @@ export default function App() {
     assigned: tapals.filter((t) => t.status === "assigned").length,
     completed: tapals.filter((t) => t.status === "completed").length,
   };
+  const onHardCopyReceived = async (id, hardCopyReceivedDate) => {
+  await markHardCopyReceived(id, hardCopyReceivedDate);
+  await loadTapals();
+};
 
   const pages = {
-    new: <NewTapal tapals={tapals} onAssign={onAssign} onAdd={onAdd} />,
-    assigned: (
-      <AssignedTapal
-        tapals={tapals}
-        onTransfer={onTransfer}
-        onComplete={onComplete}
-      />
-    ),
-    completed: <CompletedTapal tapals={tapals} />,
-    view: <TapalView tapals={tapals} />,
-    search: <TapalSearch tapals={tapals} />,
-  };
+  new: (
+  <NewTapal
+    tapals={tapals}
+    onAssign={onAssign}
+    onAdd={onAdd}
+    onHardCopyReceived={onHardCopyReceived}
+  />
+),
 
+  assigned: (
+    <AssignedTapal
+      tapals={tapals}
+      onTransfer={onTransfer}
+      onComplete={onComplete}
+    />
+  ),
+
+  completed: <CompletedTapal tapals={tapals} />,
+
+  view: <TapalView tapals={tapals} />,
+
+  search: <TapalSearch tapals={tapals} />,
+};
   return (
     <Layout active={active} setActive={setActive} counts={counts}>
       {pages[active]}

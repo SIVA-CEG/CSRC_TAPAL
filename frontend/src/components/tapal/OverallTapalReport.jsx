@@ -34,40 +34,49 @@ export default function OverallTapalReport({ tapals, onClose }) {
   }, [tapals, fromDate, toDate]);
 
   const downloadPDF = () => {
-  const element = document.getElementById("overall-report-pdf");
+    setShowPreview(true);
 
-  const options = {
-    margin: 0,
-    filename: `Overall_Tapal_Report_${toDisplayDate(fromDate)}_to_${toDisplayDate(toDate)}.pdf`,
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: {
-      scale: 2,
-      useCORS: true,
-      scrollY: 0,
-    },
-    jsPDF: {
-      unit: "mm",
-      format: "a4",
-      orientation: "landscape",
-    },
-    pagebreak: {
-      mode: ["avoid-all", "css", "legacy"],
-    },
+    setTimeout(() => {
+      const element = document.getElementById("overall-report-pdf");
+
+      const options = {
+        margin: 0,
+        filename: `Overall_Tapal_Report_${toDisplayDate(fromDate)}_to_${toDisplayDate(toDate)}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          scrollY: 0,
+        },
+        jsPDF: {
+          unit: "mm",
+          format: "a4",
+          orientation: "landscape",
+        },
+        pagebreak: {
+          mode: ["avoid-all", "css", "legacy"],
+        },
+      };
+
+      html2pdf().set(options).from(element).save();
+    }, 200);
   };
-
-  html2pdf().set(options).from(element).save();
-};
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal overall-report-modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modal overall-report-modal"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="modal-header no-print">
           <div>
             <h2>Overall Tapal Report</h2>
             <p>Select date range, preview and download landscape PDF</p>
           </div>
 
-          <button className="btn-icon" onClick={onClose}>✕</button>
+          <button className="btn-icon" onClick={onClose}>
+            ✕
+          </button>
         </div>
 
         <div className="modal-body">
@@ -90,7 +99,10 @@ export default function OverallTapalReport({ tapals, onClose }) {
               />
             </div>
 
-            <button className="btn btn-outline" onClick={() => setShowPreview(true)}>
+            <button
+              className="btn btn-outline"
+              onClick={() => setShowPreview(true)}
+            >
               Preview
             </button>
 
@@ -107,7 +119,8 @@ export default function OverallTapalReport({ tapals, onClose }) {
                 </h2>
 
                 <h3 className="overall-title">
-                  List of tapals received From {toDisplayDate(fromDate)} To {toDisplayDate(toDate)}
+                  List of tapals received From {toDisplayDate(fromDate)} To{" "}
+                  {toDisplayDate(toDate)}
                 </h3>
 
                 <table className="overall-report-table">
@@ -115,6 +128,7 @@ export default function OverallTapalReport({ tapals, onClose }) {
                     <tr>
                       <th>No</th>
                       <th>Date</th>
+                      <th>Hard Copy Received Date</th>
                       <th>M.H.No / File No.</th>
                       <th>Document Type</th>
                       <th>Subject</th>
@@ -129,7 +143,7 @@ export default function OverallTapalReport({ tapals, onClose }) {
                   <tbody>
                     {filteredTapals.length === 0 ? (
                       <tr>
-                        <td colSpan="10" className="overall-empty">
+                        <td colSpan="11" className="overall-empty">
                           No tapals found for selected date range
                         </td>
                       </tr>
@@ -137,13 +151,16 @@ export default function OverallTapalReport({ tapals, onClose }) {
                       filteredTapals.map((tapal, index) => (
                         <tr key={tapal.id}>
                           <td>{index + 1}</td>
-                          <td>{tapal.tapalDate}</td>
+                          <td>{tapal.tapalDate || "—"}</td>
+                          <td>{tapal.hardCopyReceivedDate || "—"}</td>
                           <td>{tapal.mhFileNo || "—"}</td>
                           <td>{tapal.documentType || "—"}</td>
                           <td>{tapal.subject || "—"}</td>
                           <td>
                             {tapal.amount
-                              ? `${Number(tapal.amount).toLocaleString("en-IN")}/-`
+                              ? `${Number(tapal.amount).toLocaleString(
+                                  "en-IN"
+                                )}/-`
                               : "—"}
                           </td>
                           <td>{tapal.referenceNo || "NIL"}</td>

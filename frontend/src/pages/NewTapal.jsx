@@ -4,10 +4,17 @@ import TapalDetailModal from "../components/tapal/TapalDetailModal";
 import AssignModal from "../components/tapal/AssignModal";
 import TapalForm from "../components/tapal/TapalForm";
 
-export default function NewTapal({ tapals, onAssign, onAdd }) {
+export default function NewTapal({
+  tapals,
+  onAssign,
+  onAdd,
+  onHardCopyReceived,
+}) {
   const [detail, setDetail] = useState(null);
   const [assign, setAssign] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [hardCopyDates, setHardCopyDates] = useState({});
+  const [savedHardCopyIds, setSavedHardCopyIds] = useState({});
 
   const newTapals = useMemo(
     () => tapals.filter((tapal) => tapal.status === "new"),
@@ -36,22 +43,74 @@ export default function NewTapal({ tapals, onAssign, onAdd }) {
     { key: "documentType", label: "Tapal Type" },
     { key: "tapalFrom", label: "Tapal From" },
     {
-  key: "bill",
-  label: "View Bill",
-  render: (t) => (
-    <button
-      className="btn btn-outline btn-sm"
-      onClick={() => window.open(t.billUrl || "/dummy-bill.pdf", "_blank")}
-    >
-      View Bill
-    </button>
-  ),
+      key: "bill",
+      label: "View Bill",
+      render: (tapal) => (
+        <button
+          className="btn btn-outline btn-sm"
+          onClick={() => window.open(tapal.billUrl || "/dummy-bill.pdf", "_blank")}
+        >
+          View Bill
+        </button>
+      ),
+    },
+    {
+  key: "hardCopy",
+  label: "Hard Copy Received Date",
+  render: (tapal) => {
+    const currentValue =
+      hardCopyDates[tapal.id] ?? tapal.hardCopyReceivedDateRaw ?? "";
+
+    return (
+      <div className="date-save-cell">
+        <input
+          type="date"
+          className="table-date-input"
+          value={currentValue}
+          onChange={(e) =>
+            setHardCopyDates((prev) => ({
+              ...prev,
+              [tapal.id]: e.target.value,
+            }))
+          }
+        />
+
+        <button
+          className={`btn btn-sm ${
+            savedHardCopyIds[tapal.id] ? "btn-primary" : "btn-outline"
+          }`}
+          onClick={async () => {
+            if (!currentValue) return;
+
+            await onHardCopyReceived(tapal.id, currentValue);
+
+            setSavedHardCopyIds((prev) => ({
+              ...prev,
+              [tapal.id]: true,
+            }));
+
+            setTimeout(() => {
+              setSavedHardCopyIds((prev) => ({
+                ...prev,
+                [tapal.id]: false,
+              }));
+            }, 1500);
+          }}
+        >
+          {savedHardCopyIds[tapal.id] ? "Saved ✓" : "Save"}
+        </button>
+      </div>
+    );
+  },
 },
     {
       key: "action",
       label: "Action",
       render: (tapal) => (
-        <button className="btn btn-primary btn-sm" onClick={() => setAssign(tapal)}>
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={() => setAssign(tapal)}
+        >
           Assign
         </button>
       ),
@@ -104,7 +163,9 @@ export default function NewTapal({ tapals, onAssign, onAdd }) {
         <DataTable
           columns={columns}
           rows={rowsWithIdx}
-          totalLabel={`${newTapals.length} record${newTapals.length !== 1 ? "s" : ""}`}
+          totalLabel={`${newTapals.length} record${
+            newTapals.length !== 1 ? "s" : ""
+          }`}
         />
       </div>
 

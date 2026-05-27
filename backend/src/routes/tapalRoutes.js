@@ -8,6 +8,7 @@ const {
   assignTapal,
   transferTapal,
   completeTapal,
+  markHardCopyReceived,
 } = require("../controllers/tapalController");
 
 const router = express.Router();
@@ -26,5 +27,6 @@ router.post("/", upload.single("bill"), addTapal);
 router.put("/:id/assign", assignTapal);
 router.put("/:id/transfer", transferTapal);
 router.put("/:id/complete", completeTapal);
+router.put("/:tapalNo/hard-copy-received", markHardCopyReceived);
 
 module.exports = router;

@@ -36,6 +36,11 @@ export default function AssignedTapal({ tapals, onTransfer, onComplete }) {
     },
     { key: "mhFileNo", label: "M.H.No / File No." },
     { key: "tapalDate", label: "Date" },
+    {
+  key: "hardCopyReceivedDate",
+  label: "Hard Copy Received Date",
+  render: (tapal) => tapal.hardCopyReceivedDate || "—",
+},
     { key: "ctdtCategory", label: "Category" },
     { key: "documentType", label: "Tapal Type" },
     { key: "tapalFrom", label: "Tapal From" },

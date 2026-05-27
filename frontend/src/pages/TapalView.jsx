@@ -53,6 +53,9 @@ export default function TapalView({ tapals }) {
                   <span>{tapal.tapalDate || "—"}</span>
                   <small>{tapal.campus || "—"}</small>
                 </div>
+                <div style={{ marginTop: 2 }}>
+  Hard Copy: {t.hardCopyReceivedDate || "—"}
+</div>
               </div>
 
               <p className="tapal-card-subject">{tapal.subject || "—"}</p>
