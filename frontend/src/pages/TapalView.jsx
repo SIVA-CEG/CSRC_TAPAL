@@ -54,7 +54,7 @@ export default function TapalView({ tapals }) {
                   <small>{tapal.campus || "—"}</small>
                 </div>
                 <div style={{ marginTop: 2 }}>
-  Hard Copy: {t.hardCopyReceivedDate || "—"}
+  Hard Copy: {tapal.hardCopyReceivedDate || "—"}
 </div>
               </div>
 
