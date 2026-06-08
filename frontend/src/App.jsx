@@ -1,11 +1,25 @@
 import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Layout from "./components/layout/Layout";
+
+// ── Existing pages ──────────────────────────────────────────────────────
 import NewTapal from "./pages/NewTapal";
 import AssignedTapal from "./pages/AssignedTapal";
 import CompletedTapal from "./pages/CompletedTapal";
 import TapalView from "./pages/TapalView";
 import TapalSearch from "./pages/TapalSearch";
+
+// ── New hierarchy pages ─────────────────────────────────────────────────
+import TapalHome from "./pages/TapalHome";
+import ProjectHome from "./pages/ProjectHome";
+import EndorsementTapal from "./pages/EndorsementTapal";
+import SanctionTapal from "./pages/SanctionTapal";
+import BillsTapal from "./pages/BillsTapal";
+import RequestTapal from "./pages/RequestTapal";
+import UnderConstruction from "./pages/UnderConstruction";
+
+// ── API ─────────────────────────────────────────────────────────────────
 import {
   getTapals,
   assignTapal,
@@ -14,7 +28,7 @@ import {
   markHardCopyReceived,
 } from "./api/tapalApi";
 
-
+// ── Helpers ─────────────────────────────────────────────────────────────
 const formatDate = (date) => {
   if (!date) return null;
   return new Date(date).toLocaleDateString("en-GB").replace(/\//g, "-");
@@ -45,13 +59,19 @@ const mapTapal = (t) => ({
     : "/dummy-bill.pdf",
   billFileName: t.bill_file,
   hardCopyReceivedDate: formatDate(t.hard_copy_received_date),
-hardCopyReceivedDateRaw: t.hard_copy_received_date
-  ? t.hard_copy_received_date.split("T")[0]
-  : "",
+  hardCopyReceivedDateRaw: t.hard_copy_received_date
+    ? t.hard_copy_received_date.split("T")[0]
+    : "",
 });
 
-export default function App() {
-  const [active, setActive] = useState("new");
+// ── Under-construction wrappers ─────────────────────────────────────────
+const ConsultancyUC = () => <UnderConstruction title="Consultancy" />;
+const TestingUC     = () => <UnderConstruction title="Testing" />;
+const TrainingUC    = () => <UnderConstruction title="Training" />;
+const WorkshopsUC   = () => <UnderConstruction title="Workshops" />;
+
+// ── Root app with shared tapal state ────────────────────────────────────
+function AppRoutes() {
   const [tapals, setTapals] = useState([]);
 
   const loadTapals = async () => {
@@ -82,43 +102,86 @@ export default function App() {
     await loadTapals();
   };
 
+  const onHardCopyReceived = async (id, hardCopyReceivedDate) => {
+    await markHardCopyReceived(id, hardCopyReceivedDate);
+    await loadTapals();
+  };
+
   const counts = {
-    new: tapals.filter((t) => t.status === "new").length,
-    assigned: tapals.filter((t) => t.status === "assigned").length,
+    new:       tapals.filter((t) => t.status === "new").length,
+    assigned:  tapals.filter((t) => t.status === "assigned").length,
     completed: tapals.filter((t) => t.status === "completed").length,
   };
-  const onHardCopyReceived = async (id, hardCopyReceivedDate) => {
-  await markHardCopyReceived(id, hardCopyReceivedDate);
-  await loadTapals();
-};
 
-  const pages = {
-  new: (
-  <NewTapal
-    tapals={tapals}
-    onAssign={onAssign}
-    onAdd={onAdd}
-    onHardCopyReceived={onHardCopyReceived}
-  />
-),
-
-  assigned: (
-    <AssignedTapal
-      tapals={tapals}
-      onTransfer={onTransfer}
-      onComplete={onComplete}
-    />
-  ),
-
-  completed: <CompletedTapal tapals={tapals} />,
-
-  view: <TapalView tapals={tapals} />,
-
-  search: <TapalSearch tapals={tapals} />,
-};
   return (
-    <Layout active={active} setActive={setActive} counts={counts}>
-      {pages[active]}
-    </Layout>
+    <Routes>
+      <Route path="/" element={<Layout counts={counts} />}>
+
+        {/* Default redirect */}
+        <Route index element={<Navigate to="/tapal" replace />} />
+
+        {/* ── Top-level tapal home ── */}
+        <Route path="tapal" element={<TapalHome />} />
+
+        {/* ── Under-construction categories ── */}
+        <Route path="tapal/consultancy/construction" element={<ConsultancyUC />} />
+        <Route path="tapal/testing/construction"     element={<TestingUC />} />
+        <Route path="tapal/training/construction"    element={<TrainingUC />} />
+        <Route path="tapal/workshops/construction"   element={<WorkshopsUC />} />
+
+        {/* ── Projects sub-tree ── */}
+        <Route path="tapal/projects"             element={<ProjectHome />} />
+        <Route path="tapal/projects/endorsement" element={<EndorsementTapal />} />
+        <Route path="tapal/projects/sanction"    element={<SanctionTapal />} />
+        <Route path="tapal/projects/bills"       element={<BillsTapal />} />
+        <Route path="tapal/projects/requests"    element={<RequestTapal />} />
+
+        {/* ── Legacy tapal pages (preserved, still functional) ── */}
+        <Route
+          path="tapal/legacy/new"
+          element={
+            <NewTapal
+              tapals={tapals}
+              onAssign={onAssign}
+              onAdd={onAdd}
+              onHardCopyReceived={onHardCopyReceived}
+            />
+          }
+        />
+        <Route
+          path="tapal/legacy/assigned"
+          element={
+            <AssignedTapal
+              tapals={tapals}
+              onTransfer={onTransfer}
+              onComplete={onComplete}
+            />
+          }
+        />
+        <Route
+          path="tapal/legacy/completed"
+          element={<CompletedTapal tapals={tapals} />}
+        />
+        <Route
+          path="tapal/legacy/view"
+          element={<TapalView tapals={tapals} />}
+        />
+        <Route
+          path="tapal/legacy/search"
+          element={<TapalSearch tapals={tapals} />}
+        />
+
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to="/tapal" replace />} />
+      </Route>
+    </Routes>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   );
 }

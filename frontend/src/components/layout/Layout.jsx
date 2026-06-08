@@ -1,14 +1,17 @@
+import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
-export default function Layout({ children, active, setActive, counts }) {
+export default function Layout({ counts }) {
   return (
     <div className="app-shell">
-      <Sidebar active={active} setActive={setActive} counts={counts} />
+      <Sidebar counts={counts} />
 
       <main className="main-content">
         <Header counts={counts} />
-        <section className="page-body">{children}</section>
+        <section className="page-body">
+          <Outlet />
+        </section>
       </main>
     </div>
   );
